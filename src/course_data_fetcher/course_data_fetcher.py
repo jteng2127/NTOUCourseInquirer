@@ -17,6 +17,7 @@ class CourseDataFetcher:
     self.options = Options()
     self.options.add_argument('--disable-notifications')
     self.options.add_experimental_option("detach", True)
+
     # self.options.add_argument('--headless')
 
     self.course_data_url = 'https://academics.ntou.edu.tw/?lnk=32'
@@ -24,7 +25,8 @@ class CourseDataFetcher:
   def __enter__(self):
     self.driver = webdriver.Chrome(
       service = Service(ChromeDriverManager().install()),
-      options=self.options
+      options=self.options,
+      service_log_path='NUL' # windows
     )
     self.driver.get(self.course_data_url)
     self.driver.switch_to.frame('mainFrame')
@@ -43,10 +45,10 @@ class CourseDataFetcher:
     pagesize_input.send_keys('1000')
 
     self.driver.find_element(By.ID, 'QUERY_BTN1').click()
-    loading_icon = WebDriverWait(self.driver, 10).until(
+    loading_icon = WebDriverWait(self.driver, 30).until(
       EC.invisibility_of_element_located((By.ID, '__LOADINGBAR'))
     )
-    data_table = WebDriverWait(self.driver, 10).until(
+    data_table = WebDriverWait(self.driver, 30).until(
       EC.presence_of_element_located((By.ID, 'DataGrid'))
     )
     course_df = pd.read_html(data_table.get_attribute('outerHTML'))[0]
