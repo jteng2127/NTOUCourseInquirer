@@ -1,1 +1,1 @@
-# NTOUCourseQuery
+# NTOUCourseInquirer
